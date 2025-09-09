@@ -118,8 +118,8 @@ ARegionalPlot<-
 ggplot(data = FigAbd.Region.Spring.transformed, aes(x = Year, y = Index_Millions, group = Region)) +
   geom_vline(xintercept = 2005, lty = 2, lwd = 1.2) +
   scale_y_log10(
-    breaks = c(0.1, 0.5, 1, 2, 5, 10, 20, 50),  # Custom breaks in natural units
-    labels = c("0.1", "0.5", "1", "2", "5", "10", "20", "50")  # Natural unit labels
+    breaks = c(0.1,0.2, 0.5, 1, 2, 3,4,5, 10, 20, 50),  # Custom breaks in natural units
+    labels = c("0.1","0.2","0.5", "1", "2","3","4", "5", "10", "20", "50")  # Natural unit labels
   ) +
   scale_x_continuous(breaks = seq(1990, 2023, by = 5)) +
   geom_ribbon(aes(x = Year, 
@@ -149,8 +149,8 @@ ggplot(data = FigAbd.Region.Spring.transformed, aes(x = Year, y = Index_Millions
  ggplot(data = FigAbd.Region.Spring, aes(x = Year, y = Index_Estimate/1000000, group = Region)) +
   geom_vline(xintercept = 2005, lty = 2, lwd = 1.2) +
   scale_y_log10(
-    breaks = c(0.1, 0.5, 1, 2, 5, 10, 20, 50),
-    labels = c("0.1", "0.5", "1", "2", "5", "10", "20", "50")
+    breaks = c(0.1,0.2, 0.5, 1, 2, 3,4,5, 10, 20, 50),  # Custom breaks in natural units
+    labels = c("0.1","0.2","0.5", "1", "2","3","4", "5", "10", "20", "50")  #
   ) +
   scale_x_continuous(breaks = seq(1990, 2023, by = 5)) +
   geom_ribbon(aes(x = Year, 
@@ -175,8 +175,8 @@ ggplot(data = FigAbd.Region.Spring.transformed, aes(x = Year, y = Index_Millions
 ARegionalPlot<-ggplot(data = FigAbd.Region.Spring, aes(x = Year, y = Index_Estimate/1000000, group = Region)) +
   geom_vline(xintercept = 2005, lty = 2, lwd = 1.2) +
   scale_y_log10(
-    breaks = c(0.1, 0.5, 1, 2, 5, 10, 20, 50),
-    labels = c("0.1", "0.5", "1", "2", "5", "10", "20", "50")
+    breaks = c(0.1,0.2, 0.5, 1, 2, 3,4),  # Custom breaks in natural units
+    labels = c("0.1","0.2","0.5", "1", "2","3","4")  #
   ) +
   scale_x_continuous(breaks = seq(1990, 2023, by = 5)) +
   geom_ribbon(aes(x = Year, 
