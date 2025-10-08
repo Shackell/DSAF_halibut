@@ -4,10 +4,11 @@ library(ggplot2)
 library(patchwork)
 #Bring in all the data and pair it down until it contains only what is needed for handover----
 #1: ABUNDANCE----
-#Data from 3.1 Data_prep.R, step 1: Generated stratified abundance and standard error estimates
-abundance_ind_Region<-read.csv(here::here("2025-04-23/Output/IndexAbundance/abundance_ind_Region.csv"))  
-head(abundance_ind_Region)
-#subset to Spring and remove "all" (Canada and USA only)
+  #Data from 3.1 Data_prep.R, step 1: Generated stratified abundance and standard error estimates
+  abundance_ind_Region<-read.csv(here::here("2025-04-23/Output/IndexAbundance/abundance_ind_Region.csv"))  
+  head(abundance_ind_Region)
+
+  #subset to Spring and remove "all" (Canada and USA only)
 abundance_ind_Region_Sp<-subset(abundance_ind_Region, abundance_ind_Region$Season=="Spring" & abundance_ind_Region$Index_Region=="Canada" | 
                                   abundance_ind_Region$Season=="Spring" & abundance_ind_Region$Index_Region=="USA")
 
@@ -38,19 +39,17 @@ summary(abundance_ind_Region_Sp)
 write.csv(abundance_ind_Region_Sp,(here::here("Data/Data_for_POC/POC_Abundance.csv")), row.names = FALSE)
 
 #2 AREA OCCUPIED----
-#Data from 3.1 Data_prep.R, steps 2&3: 
-  #get the abundance estimates per grid location, Add season, Year, depth, and the area (km2) of the Stratum
-    #then 8.1 Deepening.R adds a depth field
-abdest<- read.csv(here::here("2025-04-23/Output/IndexAbundance/ForShiftAnalysis/AbundanceEstimates_GridCentriods_Reg_wDepth.csv"))
-dim(abdest) 
-summary(abdest) #View(abdest) #unique(abdest$Area_km2)
-abdest$Region<-factor(abdest$Stratum)
+  #Data from 3.1 Data_prep.R, steps 2&3: 
+    #get the abundance estimates per grid location, Add season, Year, depth, and the area (km2) of the Stratum
+      #then 8.1 Deepening.R adds a depth field
+      abdest<- read.csv(here::here("2025-04-23/Output/IndexAbundance/ForShiftAnalysis/AbundanceEstimates_GridCentriods_Reg_wDepth.csv"))
+      dim(abdest) 
+      summary(abdest) 
+      abdest$Region<-factor(abdest$Stratum)
 
 #Select for Spring
 abdest.spr<- abdest %>%
   filter(Season == "Spring")
-
-# Display dataset dimensions and column names
 dim(abdest.spr)
 names(abdest.spr)
 
@@ -134,22 +133,23 @@ AO1 + AO2 + AO3 + plot_layout(widths = c(1,1,1.2))
 write.csv(area_thresholds,(here::here("Data/Data_for_POC/POC_AreaOccupied.csv")), row.names = FALSE)
 
 #3 ABUNDANCE-WEIGHTED DEPTH----
-#Data from 8.1Deepening.R:
-  #Depth field is added to the abundance estimates per grid location (AbundanceEstimates_GridCentriods_Reg_wDepth.csv),
-   # Data are grouped by year/season/region
-    #calculates the mean, median, Q5, and Q95 depth, weighted by estimated abundance values 
-D_data_Reg<- read.csv(here::here("2025-04-23/Output/Shift_Indicators/Seasonal_Deepening_Reg.csv"))
-summary(D_data_Reg) 
+  #Data from 8.1Deepening.R:
+    #Depth field is added to the abundance estimates per grid location (AbundanceEstimates_GridCentriods_Reg_wDepth.csv),
+    # Data are grouped by year/season/region
+      #calculates the mean, median, Q5, and Q95 depth, weighted by estimated abundance values 
+      D_data_Reg<- read.csv(here::here("2025-04-23/Output/Shift_Indicators/Seasonal_Deepening_Reg.csv"))
+      summary(D_data_Reg) 
+
 #subset spring
-D_data_Reg<- subset(D_data_Reg, D_data_Reg$Season == "Spring")
-names(D_data_Reg)[names(D_data_Reg) == "Stratum"] <- "Region" #rename some columns for clarity
-D_data_Reg$Period  <- NULL #remove unneeded field
-D_data_Reg$Season  <- NULL #remove unneeded field
+  D_data_Reg<- subset(D_data_Reg, D_data_Reg$Season == "Spring")
+  names(D_data_Reg)[names(D_data_Reg) == "Stratum"] <- "Region" #rename some columns for clarity
+  D_data_Reg$Period  <- NULL #remove unneeded field
+  D_data_Reg$Season  <- NULL #remove unneeded field
 #these should all be negative values 
-D_data_Reg$Depth_Mean<- D_data_Reg$Depth_Mean*-1
-D_data_Reg$Depth_Median<- D_data_Reg$Depth_Median*-1
-D_data_Reg$Depth_Q5<- D_data_Reg$Depth_Q5*-1
-D_data_Reg$Depth_Q95<- D_data_Reg$Depth_Q95*-1
+  D_data_Reg$Depth_Mean<- D_data_Reg$Depth_Mean*-1
+  D_data_Reg$Depth_Median<- D_data_Reg$Depth_Median*-1
+  D_data_Reg$Depth_Q5<- D_data_Reg$Depth_Q5*-1
+  D_data_Reg$Depth_Q95<- D_data_Reg$Depth_Q95*-1
 
 #plot
 ggplot(D_data_Reg, 
@@ -165,18 +165,28 @@ ggplot(D_data_Reg,
 write.csv(D_data_Reg,(here::here("Data/Data_for_POC/POC_AWD.csv")), row.names = FALSE)
 
 #4 RANGE EDGE----
-#from 7.1RangeEdge.R: Calculates 5th/50th/95th percentile of the spatial distribution (Weighted by abundance est,  quantile of the coordinate values)
-RE_DAT<- read.csv(here::here("R/DataforFinalFigs/Edge_df_NSreshp.csv"))
+  #from 7.1RangeEdge.R: Calculates 5th/50th/95th percentile of the spatial distribution (Weighted by abundance est,  quantile of the coordinate values)
+  RE_DAT<- read.csv(here::here("R/DataforFinalFigs/Edge_df_NSreshp.csv"))
+
 #these data area already subset to spring and represent the whole study area, but we can remove some useless fields
 names(RE_DAT)
 RE_DAT$YearGroup   <- NULL
 RE_DAT$Season   <- NULL
 write.csv(RE_DAT,(here::here("Data/Data_for_POC/POC_RangeEdge.csv")), row.names = FALSE)
-str(RE_DAT)
 
 #5 CENTRE OF GRAVITY----
-centroid_data_Reg<- read.csv(here::here("2025-04-23/Output/Shift_Indicators/seasonal_centroid_data_region.csv"))
-head(centroid_data_Reg)
+  #data from: 5.1Centre_of Gravity.R, 
+    #which takes the abundance estimates per grid location data (AbundanceEstimates_GridCentriods_Reg_wDepth.csv), from 3.1 Data_prep.R
+      #and calculates the weighted mean of lon/lat based on the abundance values,
+      centroid_data_Reg<- read.csv(here::here("2025-04-23/Output/Shift_Indicators/seasonal_centroid_data_region.csv"))
+
+#subset for spring,rename some columns for clarity, and remove unneeded
+centroid_data_Reg<-subset(centroid_data_Reg, centroid_data_Reg$Season=="Spring")
+names(centroid_data_Reg)[names(centroid_data_Reg) == "Stratum"] <- "Region" 
+centroid_data_Reg$Season  <- NULL 
+write.csv(centroid_data_Reg,(here::here("Data/Data_for_POC/POC_COG.csv")), row.names = FALSE)
+names(centroid_data_Reg)
+
 #6 DISTANCE TO BORDER----
 
 

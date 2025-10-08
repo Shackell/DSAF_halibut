@@ -12,7 +12,7 @@ library(patchwork)
 library(here)
 ```
 
-Assembled in **Prepare data for POC.R**, the **Data_for_POC folder** contains data for the temporal (and spatial where applicable*) trends for the 6 shift indicators, calculated based on Atlantic halibut abundance estimates form SDM output. 
+Assembled in **Prepare data for POC.R**, the **Data_for_POC folder** contains data for the temporal (and spatial where applicable*) trends for the 6 shift indicators, calculated based on Atlantic halibut abundance estimates form SDM output. All data have been subset to spring estimates.
 
 1. Abundance*: trend in total estimated abundance  
 
@@ -24,7 +24,7 @@ Assembled in **Prepare data for POC.R**, the **Data_for_POC folder** contains da
 
 5. Centre of Gravity*: the average latitude and longitude, weighted by abundance 
 
-6. Distance from COG to border : the shortest path (without crossing land) from the COG to the nearest point on the international border 
+6. Distance from COG to shared border : the shortest path (without crossing land) from the COG to the nearest point on the international border 
 
 ## 1. Abundance 
 
@@ -123,7 +123,7 @@ AO3<-ggplot(POC_AO_sub,
 AO1 + AO2 + AO3 + plot_layout(widths = c(1, 1, 1.2))
 ```
 
-## 3 Abundance-Weighted Depth
+## 3. Abundance-Weighted Depth
 
 **Data: POC_AWD.csv**
 
@@ -254,10 +254,12 @@ study_area_polygon <- st_as_sfc(study_area_bbox)
 st_crs(study_area_polygon) <- crs
 
 #Read shapefiles match projections, and clip to bounding box
+  All_region <- st_read(here::here("", "R/Shapefiles/IndexShapefiles/Full_RegionAl14.shp"))
   EEZ <- st_read(here::here("", "Data/Mapping_shapefiles/EEZ.shp"))
   contours <- st_read(here::here("", "Data/Mapping_shapefiles/GEBCO_DepthContours.shp"))
   NAFO <-st_read(here::here("", "Data/Mapping_shapefiles/Divisions.shp"))
   Hague <-  st_read(here::here("", "Data/Mapping_shapefiles/HagueLine.shp"))
+    All_region<- st_transform (All_region, crs)
     EEZ <- st_transform (EEZ, crs)
     contours <- st_transform (contours, crs)
     NAFO <- st_transform (NAFO, crs)
@@ -271,6 +273,7 @@ st_crs(study_area_polygon) <- crs
 RangeEdge_Mapped <-  ggplot() +
   #start with mapping shapefiles 
   geom_sf(data = contours, color="lightblue", linewidth = .4) +
+  geom_sf(data = All_region,  fill = NA) +
   geom_sf(data = NAFO, color="dimgrey", fill = NA) +
   geom_sf(data = Hague, color="black", linewidth = 1) +
   geom_sf(data = EEZ, color="black", linetype = "dashed", linewidth  = 1) +
@@ -384,13 +387,19 @@ RangeEdge_Mapped
 
 **Data: POC_COG.csv**
 
-Definition 
+The average latitude and longitude, weighted by abundance 
 
 * Region: USA, Canada
 
 * Year: 1990-2023 
 
-* Depth distribution values: Mean, Median, Q5, Q95 
+* centroid_longitude & centroid_latitude : weighted mean 
+
+* centroid_latitude_Median & centroid_longitude_Median: weighted median
+
+* centroid_latitude_Quantile_05 & centroid_longitude_Quantile_05: weighted 5th percentile 
+
+* centroid_latitude_Quantile_95 & centroid_longitude_Quantile_95: weighted 95th percentile
 
 ```{r COG data, echo=FALSE}
 POC_COG<-read.csv(here::here("Data/Data_for_POC/POC_COG.csv"))
@@ -398,18 +407,130 @@ str(POC_COG)
 
 ```
 
-### Trends in Centre of Gravity
-```{r COG plot, echo=FALSE, fig.width=6, fig.height=4}
+### Trends in Centre of Gravity (Mean)
+```{r COG plot, echo=FALSE, warning=FALSE, message=FALSE, fig.width=10, fig.height=9}
 
-ggplot(POC_COG, 
-       aes(x = Year, y = Depth_Median , colour = Region, group = Region)) +
+POC_COG_sf <- st_as_sf(POC_COG, coords = c("centroid_longitude", "centroid_latitude"))
+st_crs(POC_COG_sf) <- crs
+
+#Create one directional arrows to show th showing the overall movement (from MakingMapArrowsandTables.r)
+arrow_dataRegion <- POC_COG_sf %>%
+  group_by(Region) %>%
+  summarize(
+    start_point = first(geometry[Year == min(Year)]),  
+    end_point = first(geometry[Year == max(Year)]),  
+    start_year = min(Year),  # Get the start year
+    end_year = max(Year)  
+  ) %>%
+  mutate(
+    start_coords = st_coordinates(start_point),
+    end_coords = st_coordinates(end_point),
+    x = start_coords[,1],
+    y = start_coords[,2],
+    xend = end_coords[,1],
+    yend = end_coords[,2],
+    dx = xend - x,          
+    dy = yend - y,          
+    d_total = distHaversine(cbind(x, y), cbind(xend, yend))/1000,  # Great-circle distance in meters
+    years_in_period = end_year - start_year,  # Compute the number of years in the period
+    dist_per_year = d_total / years_in_period   # Distance per year
+  ) %>%
+  dplyr::select(Region,  x, y, xend, yend,d_total, dist_per_year) %>%
+  st_drop_geometry()
+
+#Plot COG map with arrows 
+COG_Reg_map<-ggplot() +
+  geom_sf(data = contours, color="lightblue", linewidth = .4) +
+  geom_sf(data = All_region,  fill = NA) +
+  geom_sf(data = NAFO, color="dimgrey", fill = NA) +
+  geom_sf(data = Hague, color="black", linewidth = 1) +
+  geom_sf(data = EEZ, color="black", linetype = "dashed", linewidth  = 1) +
+  geom_sf(data = Land , color = "black", fill = "cornsilk") +
+  #geom_sf(data = contours, color="lightblue",lwd=.5) +
+  #geom_sf(data = NAFO, color="black",lty=1,lwd=.8,fill = NA) +
+  #geom_sf(data = EEZ, color="black",lty=1,lwd=.8) +
+  #geom_sf(data = Hague,  fill = NA,lty=1,lwd=.8) +
+  #geom_sf(data = land, fill = "cornsilk") +  
+  geom_sf(data = POC_COG_sf, aes(color = Year),size =3, alpha = .5,shape=16) +  
+  xlim(-80, -44) + ylim(35, 55)+
+  labs(title = "", x = "",y = "",
+       color = "Year") +
+  scale_color_gradient2(low = "steelblue3",   mid = "yellow", 
+                        high = "orangered", 
+                        midpoint = 2005, 
+                        name = "Year",limits = range(POC_COG$Year)) +
+  geom_segment(data = arrow_dataRegion,
+               aes(x = x + 0.4,        # Offset values
+                   y = y + 0.4, 
+                   xend = xend + 0.4, 
+                   yend = yend + 0.4),
+               arrow = arrow(length = unit(0.35, "cm")),
+               color = "black",
+               alpha = .7,
+               size = 2)+
+  annotate("text",x=-70,y=44.5,label="USA", vjust = 0,color = "black",size = 4) +
+  annotate("text",x=-65.9,y=46,label="Canada", vjust = 0,color = "black",size = 4) +
+  # #a
+  theme_bw()+
+  theme(legend.position = "right",
+    plot.margin = margin(5, 10, 10, 10),
+    axis.text.x = element_text(size = 14, 
+                               family = "serif"),
+    axis.text.y = element_text(size = 14, 
+                               family = "serif"),
+    axis.title.x = element_text(size = 14, 
+                                hjust = 0.5, 
+                                vjust = -2, 
+                                family = "serif"),
+    axis.title.y = element_text(size = 14, 
+                                hjust = 0.5, 
+                                vjust = 4, 
+                                angle = 90, 
+                                family = "serif"),
+    legend.title = element_blank(),
+    legend.text = element_text(size = 14, family = "serif"),
+    strip.text = element_text(size = 14, 
+                              family = "serif", 
+                              angle = 0),
+    strip.background = element_rect(colour = "black", 
+                                    fill = "white"),
+    panel.grid.minor = element_blank(), panel.grid.major =  element_blank(),
+  )
+COG_Reg_map
+
+```
+
+## 6. Distance from COG to Shared Border
+
+**Data: POC_DtoB.csv**
+
+Summary 
+
+* Region: USA, Canada
+
+* Year: 1990-2023
+
+* X: Unique identifier
+
+```{r DtoB data, echo=FALSE}
+POC_DtoB<-read.csv(here::here("Data/Data_for_POC/POC_DtoB.csv"))
+str(POC_Abundance)
+
+```
+
+### Trends in Distance to Shared Border 
+
+```{r abundance plot, echo=FALSE, fig.width=6, fig.height=4}
+ggplot(POC_DtoB, 
+       aes(x = Year, y = Estimate, colour = Region, group = Region)) +
   geom_line() +
-  geom_ribbon(aes(ymin = Depth_Q5,
-                  ymax = Depth_Q95,
+  geom_ribbon(aes(ymin = Estimate - SD,
+                  ymax = Estimate + SD,
                   fill = Region), 
               alpha = 0.25, colour = NA) +
   theme_bw() +
-  labs(x = "Year", y = "Depth",
+  labs(x = "Year", y = "Estimate",
        colour = "Region", fill = "Region")
+
 ```
 
