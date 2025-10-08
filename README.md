@@ -149,7 +149,7 @@ For each shift indicator, create data, fit LM, and plot
 <br> 
 
 ### Distance from Hague 
-**6.1Distance_From_Hague.R** Calculate Distance from a fixed point on the hague line to the Centre of gravity (Mean, Median, Q5 and Q95) for time series and grouping using seasonal_centroid_data  
+**6.1Distance_From_Hague.R** Calculate Distance from the closest point on the hague line to the Centre of gravity (Mean, Median, Q5 and Q95) for time series and grouping using seasonal_centroid_data  
   1. Hague line and centriod data are turned to spatial points. A subset of the Hague line is also made to prevent Browns, Sable, CB, and Gully from estimating across land 
   2. *find_nearest_point():* function identifies the nearest hague_point to each centroid in the timeseries and creates a df that has a "closest" point for each year/season/grouping 
   3. *calculate_distances():* function created df by calculating the distance between each "closest" point and the corresponding centriod 
