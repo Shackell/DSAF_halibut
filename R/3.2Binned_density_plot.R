@@ -46,7 +46,7 @@ source(here::here("R/VAST_functions/vast_functions.R"))#the file is different wh
 source(here::here("R/VAST_functions/kf_vast_function_edits.R"))
 
 
-# Extracting and plotting predicted density at grid locs, smooth over a regular grid, bin the years based on timeframe
+# Extracting and plotting predicted abundance at grid locs, smooth over a regular grid, bin the years based on timeframe
 fit<- readRDS( here::here("2025-04-23/Halibut_BC/SpST_mod_fit.rds")) 
 land_use<-st_read(here::here("Data/land_shapefile/", "ne_50m_land.shp")) #for plotting
 region_shape <- st_read(here::here("R/Shapefiles/IndexShapefiles/Full_RegionAl14.shp"))#for clipping interpolation
@@ -115,6 +115,7 @@ xlim_use <- c(-74, -46)
 ylim_use <- c(36, 53)
 
 out_dir <- here::here("2025-04-23/Output/GridPlot")#for output
+out_dir <- here::here("Data/Data_SHinyApp_Proof_of_Concept/EstimateRasters")#for output
 
 #where to print the timeframe label
 lab_lat = 38
