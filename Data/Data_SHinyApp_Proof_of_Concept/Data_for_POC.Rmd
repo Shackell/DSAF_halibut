@@ -29,6 +29,13 @@ Assembled in **Prepare data for POC.R**, the **Data_SHinyApp_Proof_of_Concept fo
 
 7. Scaled Slopes:  lm slopes for 2006-2023 (the period when the water began warming rapidly), scaled  so that all indicators are in the same units
 
+### Notes/Updates: we don't want to distract with the Canada vs. USA thing so there have been some manipulations 
+
+* Region names have all been changed from Canada and USA to Region 1 and Region 2 Respectively 
+* Centriods for Region1 have been moved west into 4XW and Region 2 from the states in to Newfoundland 
+* Range Edge was the only indicator without a regional componenet so it is unaffected, the rest have new "manipulated" versions (_manipulated.csv)
+* I said I was going to reverse the distance to border values for Region 2, but didn't because they still reflect the right directional trend (thought the values are not accurate, should do as a placeholder)
+
 ## 1. Abundance 
 
 **Data: POC_Abundance.csv**
@@ -46,7 +53,7 @@ Total annual estimated spring-time abundance per region. Derived from indexed es
 * X: Unique identifier
 
 ```{r abundance data, echo=FALSE}
-POC_Abundance<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_Abundance.csv"))
+POC_Abundance<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_Abundance_manipulated.csv"))
 str(POC_Abundance)
 
 ```
@@ -105,7 +112,7 @@ The total area containing 50%, 75%, 90%, and 95% of the abundance. This calculat
 * Area_Efficiency: = space used per unit of abundance...is abundance more concentrated or dispersed
 
 ```{r AO data, echo=FALSE}
-POC_AO<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_AreaOccupied.csv"))
+POC_AO<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_AreaOccupied_manipulated.csv"))
 str(POC_AO)
 POC_AO_sub<-subset(POC_AO, POC_AO$Threshold ==90)
 ```
@@ -152,7 +159,7 @@ The mean, median, Q5, and Q95 depth, weighted by estimated abundance values
 * Depth distribution values (m): Mean, Median, Q5, Q95 
 
 ```{r AWD data, echo=FALSE}
-POC_AWD<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_AWD.csv"))
+POC_AWD<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_AWD_manipulated.csv"))
 str(POC_AWD)
 
 ```
@@ -414,14 +421,14 @@ The average latitude and longitude, weighted by abundance
 
 * centroid_longitude & centroid_latitude : weighted mean 
 
-* centroid_latitude_Median & centroid_longitude_Median: weighted median
+* **Removed** centroid_latitude_Median & centroid_longitude_Median: weighted median
 
-* centroid_latitude_Quantile_05 & centroid_longitude_Quantile_05: weighted 5th percentile 
+* **Removed** centroid_latitude_Quantile_05 & centroid_longitude_Quantile_05: weighted 5th percentile 
 
-* centroid_latitude_Quantile_95 & centroid_longitude_Quantile_95: weighted 95th percentile
+* **Removed** centroid_latitude_Quantile_95 & centroid_longitude_Quantile_95: weighted 95th percentile
 
 ```{r COG data, echo=FALSE}
-POC_COG<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_COG.csv"))
+POC_COG<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_COG_manipulated.csv"))
 str(POC_COG)
 
 ```
@@ -534,7 +541,7 @@ The distance between the closest point on the border to each COG metric in the t
 * Dist_Mean, Dist_Q5, Dist_Q95: Distance to COG (weighted median, weighted 5th percentile, and 95th percentile, respectively)
 
 ```{r DtoB data, echo=FALSE}
-POC_DtoB<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_DtoB.csv"))
+POC_DtoB<-read.csv(here::here("Data/Data_SHinyApp_Proof_of_Concept/POC_DtoB_manipulated.csv"))
 str(POC_DtoB)
 
 ```
@@ -594,4 +601,5 @@ str(Scaled_Slopes)
      axis.title.y = element_text(margin = margin(r = 10))
    )
 ```
+
 
