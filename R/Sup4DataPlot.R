@@ -237,8 +237,8 @@ presence_only$survey <- factor(presence_only$survey, levels = c("NEFSC", "DFO", 
 
 All_catch_plot<-ggplot() +
   geom_sf(data = NAFO, color="darkblue", fill = NA) +
-  geom_sf(data = Hague, color="black", size = 2) +
-  geom_sf(data = EEZ, color="black", linetype = "dashed", size = 3) +
+  geom_sf(data = Hague, color="black", size = 1) +
+  geom_sf(data = EEZ, color="black", linetype = "dashed", size = 1) +
   geom_sf(data = land, fill="cornsilk") +
   geom_point (data = presence_only, aes(x= longitude , y = latitude, col= survey),  alpha = .6, size = .2, shape=19)+
   scale_color_manual(values = c("NEFSC" = "steelblue", "DFO" =  "orangered", "NF" = "darkred"))+ 
