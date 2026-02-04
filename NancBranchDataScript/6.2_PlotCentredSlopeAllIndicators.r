@@ -39,10 +39,15 @@ standard_theme <- function(show_legend = FALSE, bottom_margin =5, top_margin =-1
 #Read in FIle
 # Read in the coefficients dataframes
 Combined_CentredSLopeBefAfterCoefficients <- read.csv("~/My_Program_Files/R/Hali_Shift_withNF/2025-04-23/Output/Shift_Indicators/Combined_CentredSLopeBefAfterCoefficients.csv")
+## Rename Indicator level for depth-weighted abundance
+Combined_CentredSLopeBefAfterCoefficients$Indicator[Combined_CentredSLopeBefAfterCoefficients$Indicator=="Depth-wtd Abd"]<-"Abd-wtd Depth"
+# Assign to a new variable for clarity
 combocoef<-Combined_CentredSLopeBefAfterCoefficients 
+
+combocoef$Indicator<-as.factor(combocoef$Indicator)
 # Plotting the Scaled Slope Indicators
 pd<-position_dodge(.3)
-indicator_dividers <- data.frame(xintercept = c(1.5,2.5,3.5, 5.5,7.5,8.5,10.5))  # Replace with your actual breaks
+
 summary(combocoef)
 combocoef$Region[combocoef$Theme=="Range Edge"]<-"Range Edge"
 combocoef$Region<-factor(combocoef$Region, levels = c("Range Edge","Canada", "USA"))
@@ -63,6 +68,7 @@ rangcoef$Indicator <- factor(rangcoef$Indicator, levels = c(
 
 # Position dodge setting
 pd <- position_dodge(width = 0.2)
+indicator_dividers <- data.frame(xintercept = c(1.5,2.5,3.5,4.5))  # Replace with your actual breaks
 
 rangpl<-ggplot(rangcoef, aes(y = estimate, x = fct_rev(Indicator), fill = Period)) +
   # Error bars
@@ -116,8 +122,8 @@ abdpl <- ggplot(abdcoef, aes(y = estimate, x = Indicator, fill = Period)) +
   # Points
   geom_point(size = 3, position = pd, stroke = 0.3, shape = 21, color = "black") +
   # Optional indicator divider lines
-  geom_vline(data = indicator_dividers, aes(xintercept = xintercept), 
-             linetype = "solid", color = "grey60", size = 0.4) +
+  #geom_vline(data = indicator_dividers, aes(xintercept = xintercept), 
+       #      linetype = "solid", color = "grey60", size = 0.4) +
   # Horizontal reference line
   geom_hline(yintercept = 0, linetype = "dashed", size = 0.8) +
   # y-axis ticks
@@ -144,6 +150,7 @@ abdpl <- ggplot(abdcoef, aes(y = estimate, x = Indicator, fill = Period)) +
 abdpl
 #ENDABD----
 #COG----
+indicator_dividers <- data.frame(xintercept = c(1.5))  # Replace with your actual breaks
 cogcoef<-rocoef%>%filter(Indicator=="COG North" | Indicator=="COG East")
 cogpl <- ggplot(cogcoef, aes(y = estimate, x = Indicator, fill = Period)) +
   # Error bars
@@ -186,7 +193,7 @@ cogpl <- ggplot(cogcoef, aes(y = estimate, x = Indicator, fill = Period)) +
   
 
 cogpl
-is.ggplot(cogpl)
+is_ggplot(cogpl)
 #END COGpl---
 
 
@@ -199,8 +206,8 @@ AOcoefpl <- ggplot(AOcoef, aes(y = estimate, x = Indicator, fill = Period)) +
   # Points
   geom_point(size = 3, position = pd, stroke = 0.3, shape = 21, color = "black") +
   # Optional indicator divider lines
-  geom_vline(data = indicator_dividers, aes(xintercept = xintercept), 
-             linetype = "solid", color = "grey60", size = 0.4) +
+  #geom_vline(data = indicator_dividers, aes(xintercept = xintercept), 
+            # linetype = "solid", color = "grey60", size = 0.4) +
   # Horizontal reference line
   geom_hline(yintercept = 0, linetype = "dashed", size = 0.8) +
   # y-axis ticks
@@ -264,7 +271,7 @@ AOabdpl <- ggplot(AOabdcoef, aes(y = estimate, x = Indicator, fill = Period)) +
 AOabdpl
 #END AOAB----
 #DWA----
-dwacoef<-rocoef%>%filter(Indicator=="Depth-wtd Abd")
+dwacoef<-rocoef%>%filter(Indicator=="Abd-wtd Depth")
 dwapl <- ggplot(dwacoef, aes(y = estimate, x = Indicator, fill = Period)) +
   # Error bars
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high), 
@@ -401,5 +408,5 @@ ggsave(
 )
 
 
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/CentredSlopeCombo.jpeg"), plot = simple_combo, dpi = 600, width = 8, height = 11, units = "in", device = "jpeg") 
+ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/CentredSlopeCombo_Feb4_2026.jpeg"), plot = simple_combo, dpi = 600, width = 8, height = 11, units = "in", device = "jpeg") 
 

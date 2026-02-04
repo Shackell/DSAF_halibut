@@ -336,7 +336,7 @@ Slope_Reg.spr<-Slope_Reg.spr%>%
 regpal<- c("orange", "darkblue")
 
 DeepPlot<- 
-  ggplot(data = deepReg.spr, aes(x = Year, y = Depth_MeanNeg),group=ordRegion)+
+  ggplot(data = deepReg.spr, aes(x = Year, y = Depth_MeanNeg,group=ordRegion))+
   geom_vline(xintercept=2005,lty=2,lwd=1.2)+
   geom_ribbon(aes(x = Year, ymin =  Depth_MeanNeg- Depth_Q5Neg, 
                   ymax = Depth_MeanNeg +Depth_Q95Neg, 
@@ -348,7 +348,7 @@ DeepPlot<-
   # Combine legends
   guides(color = guide_legend(title = ""),
          fill = "none") + 
-  labs(y="Depth-Weighted Abundance (m)", x="")+
+  labs(y="Abundance-weighted Depth (m)", x="")+
   guides(color = guide_legend(title = ""))+
   #annotate("text", x = 1996, y = 4.3, label = "1990-2005", color = "black", size = 5,family = "serif") +
   #annotate("text", x = 2014, y = 4.3, label = "2006-2023", color = "black", size = 5,family = "serif") +
@@ -392,7 +392,7 @@ FigureDeepDeepRates<-plot_grid(DeepPlot, DeepRegRatesPlot, nrow = 2,rel_heights 
 FigureDeepDeepRates
 #ggsave(here::here("R/DataforFinalFigs/Figure2AbdAbdRates.tiff"), plot = Figure2AbdAbdRates, dpi = 600, width = 8, height = 6, units = "in", device = "tiff")
 # END Plot abundance indexed regions  ----
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/FigureDeepDeepRates.jpeg"), plot = FigureDeepDeepRates, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
+ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/FigureDeepDeepRatesFeb4_2026.jpeg"), plot = FigureDeepDeepRates, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
 #
 #COmmit
 #END Plot deepening----
