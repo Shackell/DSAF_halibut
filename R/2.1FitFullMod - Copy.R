@@ -78,6 +78,9 @@ root_dir<- paste0(here::here(), "/")
 # Global use case options
 #seasons_run<- c("SPRING") #!!!Kiyomi: adding this part to try to make it a bit more flexible and reduce chance of error if you do end up running more than just the spring. It comes into play with data filtering, setting up observation "times", etc.
 strata_use <- data.frame("STRATA" = c("All", "USA", "Canada", "Sable",  "Gully", "BOF",  "Browns", "CapeCod", "Nantucket", "EGOM", "Georges",  "CapeBreton","HaliChan", "GrandBanks", "GBTail")) # We may want to adjust this to include more areas
+strata_use <- data.frame("STRATA" = c("All", "USA", "Canada", 
+                                      "Sable",  "Gully", "BOF",  "Browns", "CapeCod", "Nantucket", "EGOM", "Georges",  "CapeBreton","HaliChan", "GrandBanks", "GBTail")) # We may want to adjust this to include more areas
+
 cell_size <- 25000 #here is where you could adjust the resolution of the extrpolation grid. Right now, this generates a grid that is roughly equivalent to the NOAA OISST data (25 km X 25 km)!!! 
 n_x_use <- 400 #down from 400 for faster processing  
 fine_scale_use<- TRUE

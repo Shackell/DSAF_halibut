@@ -64,12 +64,13 @@ EAOplot<-ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
         #legend.box.background = element_blank(), # Transparent legend box
         #legend.position = c(.7,.5),
         #legend.text = element_text(size = 14,family="serif"),
-        plot.margin=margin(0, 0, 3, 0),
+        plot.margin=margin(10, 10, 10, 10),
         
         # General text and styling
         #text = element_text(family = "serif"),  
         axis.title = element_text(size = 12),
         axis.text = element_text(size = 12),
+        axis.text.x = element_text(angle = 90, hjust = 1, size = 12),
 
         # Strip styling
         strip.text = element_text(size = 12),
@@ -84,7 +85,7 @@ EAOplot
 
 #####END Plot EOA----
 
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/EAOplot.jpeg"), plot = EAOplot, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
+#ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/EAOplot.jpeg"), plot = EAOplot, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
 
 #Element 2:  Plot EAOvsAbd: Tidied Area vs Abundance Plot----
 library(ggpmisc)
@@ -95,15 +96,15 @@ PlotEAOAbd <- ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
                          x = Total_Abundance/1000000)) +  # Remove log10() transformation
   # Points with better styling
   geom_point(aes(color = Period), 
-             size = 2.5, 
+             size = 1.5, 
              alpha = 0.7) +
   scale_color_manual(values = c("1990-2005" = "steelblue", "2006-2023" = "orangered"))+
   # Smoothed regression lines
   geom_smooth(method = "lm", 
-              se = TRUE,
+              se = FALSE,
               aes(group = interaction(Region, Period), 
                   color = Period),
-              alpha = .1) +
+              alpha = .4) +
   # Add log10 scales for both axes
   scale_x_log10() +  # This replaces the log10() transformation in aes()
   scale_y_log10(
@@ -115,8 +116,8 @@ PlotEAOAbd <- ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
              scales = "free",
              labeller = label_wrap_gen(width = 15)) +
   # Improved labels - you can keep the log notation in labels
-  labs(title = "",
-       x =  expression("Total Annual Abundance(Millions)"),
+  labs(title = NULL,
+       x =  expression("Total Annual Abundance (Millions)"),
        #  y = "",#expression(atop("Area Occupied", "(Millions km  "^2*")")),
        color = "Period") +
   guides(fill = "none") +
@@ -133,6 +134,7 @@ PlotEAOAbd <- ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
     ),
     axis.text.y.right = element_blank(),
     axis.ticks.y.right = element_blank(),
+    #plot.margin=margin(0, 0, 0, 0),
     
     # General text and styling
     text = element_text(family = "serif"),  
@@ -144,6 +146,8 @@ PlotEAOAbd <- ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
     legend.position = "top",
     legend.title = element_blank(),
     legend.text = element_text(size = 12),
+    legend.margin     = margin(0, 0, 0, 0),
+    legend.box.margin = margin(0, 0, 0, 0),
     legend.key = element_rect(fill = "white", color = NA),
     
     # Strip styling
@@ -153,10 +157,10 @@ PlotEAOAbd <- ggplot(Area_ThresholdsforEAO %>% filter(Threshold == 90),
     # Grid lines
     panel.grid.minor = element_blank(),
     panel.grid.major = element_blank()
-  ) +
-  scale_y_log10(
-    sec.axis = dup_axis(name = expression(atop("Area Occupied", "(Millions km  "^2*")")))
-  )
+  ) 
+  #scale_y_log10(
+   # sec.axis = dup_axis(name = expression(atop("Area Occupied", "(Millions km  "^2*")")))
+ # )
 
 # Display the plot
 print(PlotEAOAbd)
@@ -164,7 +168,7 @@ print(PlotEAOAbd)
 # Alternative: If you want different colors for periods
 # PlotEAOAbd + scale_color_manual(values = c("Period1" = "steelblue", "Period2" = "orangered"))
 #####END PlotEAOvsAbd, scaled slopes fro EAO vs Abundance----
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/PlotEAOAbd.jpeg"), plot = PlotEAOAbd, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
+#ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/PlotEAOAbd.jpeg"), plot = PlotEAOAbd, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
 
 #Element 3: Range Edge  ----
 rangeedge<-read.csv(here::here("R/DataforFinalFigs/Edge_df_NSreshp.csv"))
@@ -559,7 +563,7 @@ RangeEdge_Mapped <-  ggplot() +
            x=-64.5, y=42.1,
            label = "Trailing Edge",
            color = "black",
-           size = 5,
+           size = 4,
            family = "serif") +
   #add Leading Edge 
   # Path connecting points by year
@@ -590,7 +594,7 @@ RangeEdge_Mapped <-  ggplot() +
            x=-53, y=45,
            label = "Leading Edge",
            color = "black",
-           size = 5,
+           size = 4,
            family = "serif") +
   # Blue to orange gradient for Year
   scale_color_gradient2(low ="#005A9C",       ##"#0072B2", "#003366",  #"steelblue3"
@@ -607,22 +611,22 @@ RangeEdge_Mapped <-  ggplot() +
   theme(
     legend.position = "right",
     plot.margin = margin(5, 10, 10, 10),
-    axis.text.x = element_text(size = 14, 
+    axis.text.x = element_text(size = 12, 
                                family = "serif"),
-    axis.text.y = element_text(size = 14, 
+    axis.text.y = element_text(size = 12, 
                                family = "serif"),
-    axis.title.x = element_text(size = 14, 
+    axis.title.x = element_text(size = 12, 
                                 hjust = 0.5, 
                                 vjust = -2, 
                                 family = "serif"),
-    axis.title.y = element_text(size = 14, 
+    axis.title.y = element_text(size = 12, 
                                 hjust = 0.5, 
                                 vjust = 4, 
                                 angle = 90, 
                                 family = "serif"),
     legend.title = element_blank(),
-    legend.text = element_text(size = 14, family = "serif"),
-    strip.text = element_text(size = 14, 
+    legend.text = element_text(size = 12, family = "serif"),
+    strip.text = element_text(size = 12, 
                               family = "serif", 
                               angle = 0),
     strip.background = element_rect(colour = "black", 
@@ -634,9 +638,9 @@ RangeEdge_Mapped
 ######################
 #Combineplots
 # Ensure both plots have identical margins
-RangeEdge2 <- RangeEdge_Mapped + theme(plot.margin = margin(10, 0,15,0))
-PlotEAOAbd <- PlotEAOAbd + theme(plot.margin = margin(t=0, r=15,b=10,l=10))#,axis.title.y = element_blank())
-EAOplot <- EAOplot + theme(plot.margin = margin(15, 0,20,0))#,axis.title.y = element_blank())
+RangeEdge2 <- RangeEdge_Mapped + theme(plot.margin = margin(35, 0,15,0))
+PlotEAOAbd <- PlotEAOAbd + theme(plot.margin = margin(0, 15,10,10))#,axis.title.y = element_blank())
+EAOplot <- EAOplot + theme(plot.margin = margin(15, 5,20,5))#,axis.title.y = element_blank())
 
 
 # Combo plot: Proper nested approach----
@@ -652,11 +656,11 @@ bottom_row <- plot_grid(
 
 # Create bottom row WITHOUT labels
 top_centered <- plot_grid(
-  NULL, 
-  RangeEdge2, 
-  NULL,
-  ncol = 3,
-  rel_widths = c(0.1, .8, 0.1)
+  #NULL, 
+  RangeEdge2
+  #NULL,
+  #ncol = 3,
+  #rel_widths = c(0.1, .8, 0.1)
 )
 
 # Combine rows and add ALL labels at this final step
@@ -667,10 +671,13 @@ EAORangeCombo_alt <- plot_grid(
   nrow = 2,
   rel_heights = c(.55,.45)
 )
+library(cowplot)
+
 EAORangeCombo_final <- ggdraw(EAORangeCombo_alt) +
-  draw_plot_label(label = "(a)", x = 0.01, y = 0.99, size = 14) +   # Top left
-  draw_plot_label(label = "(b)", x = 0.01, y = 0.45, size = 14) +   # Top right  
-  draw_plot_label(label = "(c)", x = 0.52, y = 0.45, size = 14)     # Bottom (centered plot)
+  draw_label("Figure 5", x = 0.01, y = 0.99, hjust = 0, vjust = 1, fontfamily="serif", size = 14) +
+  draw_plot_label(label = "(a)", x = 0.01, y = 0.95, family="serif", size = 12) +   # Top left
+  draw_plot_label(label = "(b)", x = 0.01, y = 0.45, family="serif", size = 12) +   # Top right  
+  draw_plot_label(label = "(c)", x = 0.52, y = 0.45, family="serif", size = 12)     # Bottom (centered plot)
 
 
 # Display the result
@@ -679,7 +686,4 @@ print(EAORangeCombo_final)
 #ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/RangeEdge.jpeg"), plot = RangeEdge, dpi = 600, width = 8, height = 6, units = "in", device = "jpeg")
 #END Combo plot: Proper nested approach----
 
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/EAORangeCombo_final.jpeg"), plot = EAORangeCombo_final, dpi = 600, width = 10, height = 8, units = "in", device = "jpeg") 
-
-CombEAOABDrANGE
-
+ggsave(here::here("FebFigs/Figure5_EAORangeCombo_Feb.tif"), plot = EAORangeCombo_final, dpi = 600, width = 7, height = 6, units = "in", compression = "lzw", , bg = "white") 
