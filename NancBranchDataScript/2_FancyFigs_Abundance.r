@@ -433,11 +433,12 @@ final_plot <- camap_with_legend_tagged / bottom_row_patchwork +
 # Display
 final_plot2<-ggdraw(final_plot) +
   draw_plot_label(label = "(a)", x = 0.01, y = 0.89, size = 14,family="serif") +   # Top left
-  draw_plot_label(label = "(b)", x = 0.01, y = 0.48, size = 14) +   # Top right  
-  draw_plot_label(label = "(c)", x = 0.45, y = 0.48, size = 14)     # Bottom (centered plot)
-
+  draw_plot_label(label = "(b)", x = 0.01, y = 0.5, size = 14,,family="serif") +   # Top right  
+  draw_plot_label(label = "(c)", x = 0.448, y = 0.5, size = 14,,family="serif") +    # Bottom (centered plot)
+  draw_plot_label(label = "Figure 2", x = 0.001, y = 1, size = 11,family="serif")  # Top left
 #END manual labels----
 final_plot2
 # Save the final plot with legend
-ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/FigureAbundanceFAandMapTrends_Feb11_2026.tif"), plot = final_plot, dpi = 600, width = 8, height = 6, units = "in", compression="lzw")
+ggsave(here::here("NancBranchDataScript/FancyFiguresforMS/FigureAbundanceFAandMapTrends_Feb11_2026.tif"), plot = final_plot2, dpi = 600, width = 7, height = 6, units = "in", compression="lzw")
 
+ggsave(here::here("FebFigs/FigureAbundanceFAandMapTrends_Feb11_2026.tif"), plot = final_plot2, dpi = 600, width = 7, height = 6, units = "in", compression="lzw")
