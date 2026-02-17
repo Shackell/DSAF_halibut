@@ -155,7 +155,7 @@ print(summary_stats)
 # Remove geometry column
 non_spatial_data <- st_drop_geometry(summary_stats)
 head(non_spatial_data)
-write.csv(non_spatial_data, "CRIB results/crib_halibut_byNAFO.csv")
+write.csv(non_spatial_data, "CRIB results/crib_halibut_byNAFO.csv", row.names = FALSE)
 
 # Group halcrib_with_zones by NAFO zone and calculate summary risks
 most_frequent_risks <- halcrib_with_zones_clean %>%
