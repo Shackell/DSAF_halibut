@@ -207,11 +207,11 @@ haltoe<-halcrib[,c("longitude","latitude","ToE.year")]
 halcv<-halcrib[,c("longitude","latitude","E.Climate.velocity")]
 halthv<-halcrib[,c("longitude","latitude","AC.Thermal.habitat.availability")]
 # Convert to a spatial object
-spatial_points <- vect(halthv, geom = c("longitude", "latitude"), crs = "WGS84")
+spatial_points <- vect(halv, geom = c("longitude", "latitude"), crs = "WGS84")
 # Create an empty raster (set resolution and extent as needed)
 r <- rast(extent=spatial_points, resolution = 0.25, crs = "WGS84") # Adjust resolution
 # Rasterize the points into a grid
-raster_data <- rasterize(spatial_points, r, field = "AC.Thermal.habitat.availability", fun = mean)
+raster_data <- rasterize(spatial_points, r, field = "Vulnerability", fun = mean)
 #plot(raster_data)
 
 #add halibut vulnerability rasters to NAFO map
@@ -219,19 +219,19 @@ library(rnaturalearth)
 library(rnaturalearthdata)
 library(viridis) 
 raster_df<-as.data.frame(raster_data, xy=TRUE)
-colnames(raster_df) <- c("longitude", "latitude", "AC.Thermal.habitat.availability") 
+colnames(raster_df) <- c("longitude", "latitude", "Vulnerability") 
 VMAP <- ggplot() +
-  geom_raster(data = raster_df, aes(x = longitude, y = latitude, fill = `AC.Thermal.habitat.availability`)) +
+  geom_raster(data = raster_df, aes(x = longitude, y = latitude, fill = `Vulnerability`)) +
   geom_sf(data = All_region_df, fill = NA) +
   geom_sf(data = Hague, color = "navy") +
   geom_sf(data = EEZ, color = "navy", linetype = "dashed", size = 1.2) +
   geom_sf(data = NAFO, color = "darkgrey", size=0.9, fill = NA) +
   geom_sf(data = land, fill = "cornsilk") +
-  scale_fill_viridis_c(option = "D", name = "Thermal Habitat Variability") +
+  scale_fill_viridis_c(option = "D", name = "Vulnerability") +
   xlim(-72.5, -45) + ylim(39, 60) +
   theme_bw() +
   theme(axis.text = element_text(angle = 0, vjust = 0.2, hjust = 1, size = 8, family = "serif")) +
-  labs(title = "Thermal Habitat Variability", x = "Longitude", y = "Latitude", color = "Thermal Habitat Variability")
+  labs(title = "Vulnerability", x = "Longitude", y = "Latitude", color = "Vulnerability")
 print(VMAP) 
 
 ### Calculate average + SD for each indicator in zones 4X, 4VW, and 3KL:###
